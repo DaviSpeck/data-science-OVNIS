@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Index</title>
+</head>
+<style type="text/css">
+	div {
+		width: 700px;
+	}
+</style>
+<body>
+
+<h1>Index > Gráficos</h1>
+
+<div>
+  <canvas id="grafico1"></canvas>
+</div>
+
+<div>
+  <canvas id="grafico2"></canvas>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+<script type="text/javascript">
+
+function verificaTotalMesAno(resultado, ano, mes) {
+	let tot = 0;
+	for (let i = 0; i < resultado.length; i++) {
+		let dataOcorrencia = resultado[i]['_id'].split('-');
+
+		if (parseInt(dataOcorrencia[0]) == ano && parseInt(dataOcorrencia[1]) == mes) {
+			tot += parseInt(resultado[i]['count']);
+		}
+	}
+
+	return tot;
+}
+
+function verificaTodosMesesAno(resultado, ano) {
+	let res = [];
+
+	for (let i = 1; i <= 12; i++) {
+		res.push(verificaTotalMesAno(resultado, ano, i));
+	}
+	
+	return res;	
+}
+
+function verificaCasosAno(resultado, ano) {
+	let tot = 0;
+	for (let i = 0; i < resultado.length; i++) {
+		let dataOcorrencia = resultado[i]['_id'].split('-');
+
+		if (parseInt(dataOcorrencia[0]) == ano) {
+			tot += parseInt(resultado[i]['count']);
+		}
+	}
+
+	return tot;
+}
+
+function verificaIntervaloAno(resultado, intervalo) {
+	let res = [], label = [];
+	for (let i = intervalo[0]; i <= intervalo[1]; i++) {
+		res.push(verificaCasosAno(resultado, i));
+		label.push(i);
+	}
+
+	return {
+		resultado: res,
+		label: label
+	};
+}
+
+
+async function req() {
+	try {
+		const res = await fetch('http://127.0.0.1:3000/dados', {
+			method: 'GET'
+		});
+		const r = await res.json();
+
+		console.log(r);
+
+		// primeiro gráfico
+		let anoAVerificar = 2010;
+		let g1 = document.getElementById("grafico1").getContext("2d");
+
+		let data = {
+		  labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+		  datasets: [{
+		    label: `Phoenix - Casos ao longo dos meses do ano de ${anoAVerificar}`,
+		    backgroundColor: ["royalblue"],
+		    data: verificaTodosMesesAno(r.resultado, anoAVerificar)
+		  }]
+		};
+
+		let grafico1 = new Chart(g1, {
+		  type: 'bar',
+		  data: data,
+		});
+
+		// segundo gráfico
+		let g2 = document.getElementById("grafico2").getContext("2d");
+
+		saidaParaSegundoGrafico = verificaIntervaloAno(r.resultado, [1997, 2017]);
+
+		let data2 = {
+		  labels: saidaParaSegundoGrafico.label,
+		  datasets: [{
+		    label: `Phoenix - Casos ao longo de 1997 e 2017`,
+		    backgroundColor: ["royalblue"],
+		    data: saidaParaSegundoGrafico.resultado
+		  }]
+		};
+
+		let grafico2 = new Chart(g2, {
+		  type: 'line',
+		  data: data2,
+		});
+
+	} catch(err) {
+		console.log(err);
+	}	
+}
+
+req();
+
+</script>
+</body>
+</html>

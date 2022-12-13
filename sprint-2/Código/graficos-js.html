@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Gráficos</title>
+</head>
+<style type="text/css">
+	div {
+		width: 700px;
+	}
+</style>
+<body>
+
+<div>
+  <canvas id="grafico1"></canvas>
+</div>
+
+<div>
+  <canvas id="grafico2"></canvas>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+<script type="text/javascript">
+let g1 = document.getElementById("grafico1").getContext("2d");
+let g2 = document.getElementById("grafico2").getContext("2d");
+
+/*
+[
+  {
+    estado: 'CA',
+    light: '2457',
+    circle: '1184',
+    fireball: '995',
+    sphere: '807'
+  },
+  {
+    estado: 'FL',
+    light: '1078',
+    circle: '650',
+    fireball: '630',
+    sphere: '396'
+  },
+  {
+    estado: 'WA',
+    light: '1142',
+    circle: '468',
+    fireball: '463',
+    sphere: '337'
+  },
+  {
+    estado: 'TX',
+    light: '864',
+    circle: '389',
+    fireball: '262',
+    sphere: '240'
+  }
+]
+*/
+
+let data = {
+  labels: ["CA", "FL", "WA", "TX"],
+  datasets: [{
+    label: "Light",
+    backgroundColor: "seagreen",
+    data: [2457, 1078, 1142, 864]
+  }, {
+    label: "Circle",
+    backgroundColor: "teal",
+    data: [1184, 650, 468, 389]
+  }, {
+    label: "Fireball",
+    backgroundColor: "tomato",
+    data: [995, 630, 463, 262]
+  }, {
+    label: "Sphere",
+    backgroundColor: "orange",
+    data: [807, 396, 337, 240]
+  }]
+};
+
+let grafico1 = new Chart(g1, {
+  type: 'bar',
+  data: data,
+  options: {
+    barValueSpacing: 20
+  }
+});
+
+let grafico2 = new Chart(g2, {
+  type: 'bar',
+  data: data,
+  options: {
+    barValueSpacing: 20,
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true
+      }
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
